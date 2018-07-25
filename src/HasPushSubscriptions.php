@@ -42,8 +42,8 @@ trait HasPushSubscriptions
             'endpoint' => $endpoint,
             'public_key' => $key,
             'auth_token' => $token,
-            'list_id' => $lists_id,
-            'user_id' => $users_id
+            'list_id' => $list_id,
+            'user_id' => $user_id
         ]));
     }
 
@@ -55,7 +55,7 @@ trait HasPushSubscriptions
      */
     public function pushSubscriptionBelongsToUser($subscription)
     {
-        return (int) $subscription->users_id === (int) $this->getAuthIdentifier();
+        return (int) $subscription->user_id === (int) $this->getAuthIdentifier();
     }
 
     /**
