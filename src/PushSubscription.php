@@ -16,8 +16,8 @@ class PushSubscription extends Model
         'endpoint',
         'public_key',
         'auth_token',
-        'lists_id',
-        'users_id',
+        'list_id',
+        'user_id',
     ];
 
     /**
