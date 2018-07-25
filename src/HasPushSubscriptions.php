@@ -55,7 +55,7 @@ trait HasPushSubscriptions
      */
     public function pushSubscriptionBelongsToUser($subscription)
     {
-        return (int) $subscription->user_id === (int) $this->getAuthIdentifier();
+        return (int) $subscription->users_id === (int) $this->getAuthIdentifier();
     }
 
     /**
