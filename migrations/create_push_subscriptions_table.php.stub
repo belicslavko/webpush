@@ -16,7 +16,7 @@ class CreatePushSubscriptionsTable extends Migration
         Schema::create('push_subscriptions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned()->index();
-            $table->integer('list_id')->unsigned()->index();
+            $table->integer('lists_id')->unsigned()->index();
             $table->text('endpoint');
             $table->string('public_key')->nullable();
             $table->string('auth_token')->nullable();
@@ -27,7 +27,7 @@ class CreatePushSubscriptionsTable extends Migration
                     ->on('users')
                     ->onDelete('cascade');
 
-            $table->foreign('list_id')
+            $table->foreign('lists_id')
                   ->references('id')
                   ->on('lists')
                   ->onDelete('cascade');

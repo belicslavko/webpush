@@ -22,7 +22,7 @@ trait HasPushSubscriptions
      * @param  string|null $token
      * @return \NotificationChannels\WebPush\PushSubscription
      */
-    public function updatePushSubscription($endpoint, $user_id, $list_id, $key = null, $token = null)
+    public function updatePushSubscription($endpoint, $user_id, $lists_id, $key = null, $token = null)
     {
         $subscription = PushSubscription::findByEndpoint($endpoint);
 
@@ -42,7 +42,7 @@ trait HasPushSubscriptions
             'endpoint' => $endpoint,
             'public_key' => $key,
             'auth_token' => $token,
-            'list_id' => $list_id,
+            'lists_id' => $lists_id,
             'user_id' => $user_id
         ]));
     }
