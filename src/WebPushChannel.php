@@ -2,6 +2,8 @@
 
 namespace NotificationChannels\WebPush;
 
+use App\Models\PrepareAutoresponder;
+use App\Models\SentNotification;
 use Minishlink\WebPush\WebPush;
 use Illuminate\Notifications\Notification;
 
@@ -36,14 +38,56 @@ class WebPushChannel
 
         $payload = json_encode($notification->toWebPush($notifiable, $notification)->toArray());
 
-        $subscriptions->each(function ($sub) use ($payload) {
-            $this->webPush->sendNotification(
-                $sub->endpoint,
-                $payload,
-                $sub->public_key,
-                $sub->auth_token
-            );
-        });
+        $notification_id = $notification->getNotificationId();
+        $list_id = $notification->getListId();
+
+        $subcriber_id = $notification->getSubscriberId();
+
+        if(!empty($subcriber_id)){
+
+	        $subscriptions->each( function ( $sub ) use ( $payload, $notification_id, $list_id, $subcriber_id ) {
+
+	        	if($sub->id === (int)$subcriber_id) {
+			        $this->webPush->sendNotification(
+				        $sub->endpoint,
+				        $payload,
+				        $sub->public_key,
+				        $sub->auth_token
+			        );
+
+
+			        $notify                        = new SentNotification();
+			        $notify->push_subscriptions_id = $sub->id;
+			        $notify->lists_id              = $list_id;
+			        $notify->notifications_id      = $notification_id;
+			        $notify->save();
+
+			        PrepareAutoresponder::where('push_subscriptions_id', $sub->id)->where('notifications_id', $notification_id)->delete();
+		        }
+
+	        } );
+
+        }else {
+
+	        $subscriptions->each( function ( $sub ) use ( $payload, $notification_id, $list_id ) {
+		        $this->webPush->sendNotification(
+			        $sub->endpoint,
+			        $payload,
+			        $sub->public_key,
+			        $sub->auth_token
+		        );
+
+
+		        $notify                        = new SentNotification();
+		        $notify->push_subscriptions_id = $sub->id;
+		        $notify->lists_id              = $list_id;
+		        $notify->notifications_id      = $notification_id;
+		        $notify->save();
+
+
+	        } );
+
+        }
 
         $response = $this->webPush->flush();
 

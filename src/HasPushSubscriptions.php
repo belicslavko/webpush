@@ -2,6 +2,9 @@
 
 namespace NotificationChannels\WebPush;
 
+use App\Models\PushSubscriptions;
+use Illuminate\Support\Facades\Auth;
+
 trait HasPushSubscriptions
 {
     /**
@@ -24,9 +27,10 @@ trait HasPushSubscriptions
      */
     public function updatePushSubscription($endpoint, $user_id, $lists_id, $key = null, $token = null)
     {
-        $subscription = PushSubscription::findByEndpoint($endpoint);
+        $subscription = PushSubscription::findByEndpointAndList($endpoint, $lists_id);
 
-        if ($subscription && $this->pushSubscriptionBelongsToUser($subscription)) {
+
+        if ($subscription ) {
             $subscription->public_key = $key;
             $subscription->auth_token = $token;
             $subscription->save();
@@ -34,9 +38,7 @@ trait HasPushSubscriptions
             return $subscription;
         }
 
-        if ($subscription && ! $this->pushSubscriptionBelongsToUser($subscription)) {
-            $subscription->delete();
-        }
+
 
         return $this->pushSubscriptions()->save(new PushSubscription([
             'endpoint' => $endpoint,

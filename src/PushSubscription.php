@@ -40,4 +40,9 @@ class PushSubscription extends Model
     {
         return static::where('endpoint', $endpoint)->first();
     }
+
+	public static function findByEndpointAndList($endpoint, $lists_id)
+	{
+		return static::where('endpoint', $endpoint)->where('lists_id', $lists_id)->first();
+	}
 }
